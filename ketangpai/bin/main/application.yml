@@ -1,0 +1,27 @@
+server:
+  port: 8080
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/ketangpai?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&serverTimezone=UTC
+    username: root
+    password: root
+  resources:
+    static-locations: classpath:/META-INF/resources/,classpath:/static,classpath:/resources/,file:${web.upload-path}
+  mvc:
+    static-path-pattern: /ketangpai/**
+  servlet:
+    multipart:
+       enabled: true
+       max-file-size: 50MB
+       max-request-size: 100MB
+mybatis:
+  type-aliases-package: mybatis.demo.entity
+  mapper-locations: classpath:dao/*Mapper.xml
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+app:
+  uploadFolder: D://ketangpai/
+  previewPath: http://localhost:8080/ketangpai/
+web:
+  upload-path: D://ketangpai/

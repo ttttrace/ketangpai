@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+			PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+			"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mybatis.demo.dao.CourseMapper">
+	<resultMap id="CourseResultMap" type="mybatis.demo.entity.Course">
+        <id property="id" column="id"/>
+        <result property="courseName" column="courseName"/>
+        <result property="className" column="className"/>
+        <result property="term" column="term"/>
+        <association property="teacher" javaType="mybatis.demo.entity.TS">
+        	<id property="id" column="teacherId"/>
+            <result property="name" column="name"/>
+            <result property="userFace" column="userFace"/>
+        </association>
+    </resultMap>
+	<select id="findAllCourseByUser" resultMap="CourseResultMap">
+		select  course.id,courseName,className,term,TS.id as teacherId,name,userFace FROM course,coursestudent,TS where 
+		studentId=#{id} and isFile=0 and course.id=coursestudent.courseId AND course.teacherId=TS.id
+	</select>
+	<select id="findAllFileCourse" resultMap="CourseResultMap">
+		select  course.id,courseName,className,term,TS.id as teacherId,name,userFace FROM course,coursestudent,TS where 
+		studentId=#{id} and isFile=1 and course.id=coursestudent.courseId AND course.teacherId=TS.id
+	</select>
+	<select id="findTeacherById" resultType="mybatis.demo.security.model.User">
+		select * from user where id=#{id}
+	</select>
+	
+	<select id="findHomeworkTop" resultType="mybatis.demo.entity.Homework">
+		select homework.id as id,title FROM course,homework where course.id=homework.courseId and course.id=#{id} ORDER BY deadline DESC LIMIT 2
+	</select>
+	
+	<select id="findHomeworkByCourseId" resultType="mybatis.demo.entity.Homework">
+		select homework.id as id,title FROM course,homework where course.id=homework.courseId and course.id=#{id} ORDER BY deadline DESC
+	</select>
+	
+	<select id="teachingCourse" resultMap="CourseResultMap">
+		select  course.id,courseName,className,term,TS.id as teacherId,name,userFace FROM course,courseteacher,TS where 
+		course.teacherId=#{id} and isFile=0 and course.id=courseteacher.courseId AND course.teacherId=TS.id
+	</select>
+	<select id="showCourseDetail" resultType="mybatis.demo.entity.Course">
+		select * from course where id=#{id}
+	</select>
+	<insert id="addCourse" parameterType="mybatis.demo.entity.Course">
+		insert into course (id,courseName,className,teacherId,term) values 
+    	(#{id},#{courseName},#{className},#{teacherId},#{term})
+	</insert>
+	<insert id="addCourseTeacher">
+		insert into courseteacher (courseId,teacherId,isFile) values(#{arg0},#{arg1},0) 
+	</insert>
+	<insert id="joinCourse">
+		insert into coursestudent (courseId,studentId,isFile) values(#{arg0},#{arg1},0) 
+	</insert>
+	<update id="updateCourse"  parameterType="mybatis.demo.entity.Course">
+		update course set courseName=#{courseName},className=#{className},term=#{term} where id=#{id}
+	</update>
+	<delete id="quitCourse">
+		delete from coursestudent where courseId=#{arg0} and studentId=#{arg1} 
+	</delete>
+	<delete id="deleteCourse">
+		delete from course where id=#{arg0}
+	</delete>
+	<delete id="deleteCourseTeacher">
+		delete from courseteacher where courseId=#{arg0} and teacherId=#{arg1} 
+	</delete>
+	<select id="getStuNum" resultType="String">
+		select count(*) from coursestudent where courseId=#{arg0}
+	</select>
+	<update id="fileAll">
+		update courseteacher set isFile=1 where courseId=#{arg0} and teacherId=#{arg1};
+		update coursestudent set isFile=1 where courseId={arg0};
+	</update>
+	<update id="fileTeacher">
+		update courseteacher set isFile=1 where courseId=#{arg0} and teacherId=#{arg1}
+	</update>
+	<update id="fileStudent">
+		update coursestudent set isFile=1 where courseId={arg0} and studentId=#{arg1}
+	</update>
+	<update id="unFileTeacher">
+		update courseteacher set isFile=0 where courseId=#{arg0} and teacherId=#{arg1}
+	</update>
+	<update id="unFileStudent">
+		update courseteacher set isFile=0 where courseId=#{arg0} and studentId=#{arg1}
+	</update>
+</mapper>

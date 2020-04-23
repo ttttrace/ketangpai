@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+			PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+			"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mybatis.demo.dao.HomeworkMapper">
+	<select id="getHomeworks" resultType="mybatis.demo.entity.Homework">
+		select * from homework where courseId=#{arg0} ORDER BY createTime desc
+	</select>
+	<insert id="addHomework" useGeneratedKeys="true" parameterType="mybatis.demo.entity.Homework" keyProperty="id" >
+		insert into homework (courseId,title,content,deadline,score,file,createTime,canDelay) values
+		(#{courseId},#{title},#{content},#{deadline},#{score},#{file},#{createTime},#{canDelay})
+	</insert>
+	<select id="getWork" resultType="mybatis.demo.entity.Homework">
+		select * from homework where id=#{arg0}
+	</select>
+	<select id="unRead" resultType="String">		
+		select count(*) unRead from homework#{arg0} where isRead=0 and isSubmit=1;
+	</select>
+	<select id="read" resultType="String">
+		select count(*) `read` from homework#{arg0} where isRead>0;
+	</select>
+	<select id="unSubmit" resultType="String">	
+		select count(*) unSubmit from homework#{arg0} where isSubmit=0;
+	</select>
+	<select id="isSubmit" resultType="String">
+		select isSubmit from homework#{arg0} where id=#{arg1}
+	</select>
+	<update id="createTablework">
+ 		CREATE TABLE homework#{arg0} (
+ 	id int,
+   `schoolId` varchar(255) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `file` longtext DEFAULT NULL,
+   `score` varchar(255) DEFAULT NULL,
+  `date` datetime DEFAULT NULL,
+   `isSubmit` int(11) NOT NULL DEFAULT '0',
+  `isRead` int(11) NOT NULL DEFAULT '0'
+) as select ts.id,ts.tsid as schoolId,ts.name from coursestudent,ts where courseId=#{arg1} and coursestudent.studentId=ts.id
+	</update>
+	<delete id="deleteHomework">
+		delete from homework where id=#{arg0};
+	</delete>
+	<delete id="deleteWorkStu">
+		drop TABLE homework#{arg0}
+	</delete>
+	<update id="addHomeworkStu">
+		update homework#{arg0} set file=#{arg1},date=#{arg2},isSubmit=1 where id=#{arg3}
+	</update>
+	<insert id="addnewStu">
+		insert into homework#{arg0} (id,schoolId,name) values (#{arg1},#{arg2},#{arg3})
+	</insert>
+	<select id="getWorkStu" resultType="mybatis.demo.entity.HomeworkStudent">
+		select * from homework#{arg0} where id=#{arg1}
+	</select>
+</mapper>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+			PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+			"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mybatis.demo.dao.TeacherMapper">
+	<select id="getAllStudents" resultType="mybatis.demo.entity.HomeworkStudent">
+		select * from homework#{arg0}
+	</select>
+	<update id="updateScore">
+		update homework#{arg0} set score=#{arg1},isRead=#{arg2} where schoolId=#{arg3}
+	</update>
+	<select id="search" resultType="mybatis.demo.entity.HomeworkStudent">
+		select * from homework#{arg0} where schoolId like "%${arg1}%" or name like "%${arg1}%"
+	</select>
+</mapper>
